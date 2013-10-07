@@ -132,5 +132,21 @@ namespace LibGit2Sharp
                 return string.Format(CultureInfo.InvariantCulture, "{0}: {1}", State, FilePath);
             }
         }
+
+        public static readonly FileStatus StagedStatuses =
+            FileStatus.Added |
+            FileStatus.Staged |
+            FileStatus.Removed |
+            FileStatus.StagedTypeChange |
+            FileStatus.RenamedInIndex;
+
+        public bool IsStaged
+        {
+            get
+            {
+                return StagedStatuses.HasFlag(State);
+
+            }
+        }
     }
 }
