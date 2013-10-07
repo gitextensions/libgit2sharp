@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using LibGit2Sharp.Core;
+using LibGit2Sharp.Core.Compat;
 
 namespace LibGit2Sharp
 {
@@ -98,6 +99,22 @@ namespace LibGit2Sharp
         private string DebuggerDisplay
         {
             get { return string.Format("{0}: {1}", State, FilePath); }
+        }
+
+        public static readonly FileStatus StagedStatuses = 
+            FileStatus.Added |
+            FileStatus.Staged |
+            FileStatus.Removed |
+            FileStatus.StagedTypeChange |
+            FileStatus.Renamed;
+
+        public bool IsStaged
+        {
+            get
+            {
+                return StagedStatuses.HasFlag(State);
+
+            }
         }
     }
 }
