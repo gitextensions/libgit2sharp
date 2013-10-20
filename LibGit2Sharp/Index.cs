@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using LibGit2Sharp.Core;
 using LibGit2Sharp.Core.Compat;
 using LibGit2Sharp.Core.Handles;
@@ -156,8 +155,7 @@ namespace LibGit2Sharp
         {
             Ensure.ArgumentNotNull(paths, "paths");
 
-            var compareOptions = new CompareOptions { SkipPatchBuilding = true };
-            TreeChanges changes = repo.Diff.Compare(DiffModifiers.IncludeUntracked | DiffModifiers.IncludeIgnored, paths, explicitPathsOptions, compareOptions);
+            var changes = repo.Diff.Compare<TreeChanges>(DiffModifiers.IncludeUntracked | DiffModifiers.IncludeIgnored, paths, explicitPathsOptions);
 
             foreach (var treeEntryChanges in changes)
             {
@@ -214,8 +212,7 @@ namespace LibGit2Sharp
 
             if (repo.Info.IsHeadUnborn)
             {
-                var compareOptions = new CompareOptions { SkipPatchBuilding = true };
-                TreeChanges changes = repo.Diff.Compare(null, DiffTargets.Index, paths, explicitPathsOptions, compareOptions);
+                var changes = repo.Diff.Compare<TreeChanges>(null, DiffTargets.Index, paths, explicitPathsOptions);
 
                 Reset(changes);
             }
@@ -350,8 +347,7 @@ namespace LibGit2Sharp
         public virtual void Remove(IEnumerable<string> paths, bool removeFromWorkingDirectory = true, ExplicitPathsOptions explicitPathsOptions = null)
         {
             var pathsList = paths.ToList();
-            var compareOptions = new CompareOptions { SkipPatchBuilding = true };
-            TreeChanges changes = repo.Diff.Compare(DiffModifiers.IncludeUnmodified | DiffModifiers.IncludeUntracked, pathsList, explicitPathsOptions, compareOptions);
+            var changes = repo.Diff.Compare<TreeChanges>(DiffModifiers.IncludeUnmodified | DiffModifiers.IncludeUntracked, pathsList, explicitPathsOptions);
 
             var pathsTodelete = pathsList.Where(p => Directory.Exists(Path.Combine(repo.Info.WorkingDirectory, p))).ToList();
 
@@ -553,11 +549,11 @@ namespace LibGit2Sharp
             {
                 Mode = (uint)treeEntryChanges.OldMode,
                 oid = treeEntryChanges.OldOid.Oid,
-                Path = FilePathMarshaler.FromManaged(treeEntryChanges.OldPath),
+                Path = StrictFilePathMarshaler.FromManaged(treeEntryChanges.OldPath),
             };
 
             Proxy.git_index_add(handle, indexEntry);
-            Marshal.FreeHGlobal(indexEntry.Path);
+            EncodingMarshaler.Cleanup(indexEntry.Path);
         }
 
         internal void ReloadFromDisk()

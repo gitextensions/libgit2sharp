@@ -22,8 +22,8 @@ namespace LibGit2Sharp
             var handle = new GitSignature();
             Marshal.PtrToStructure(signaturePtr, handle);
 
-            name = Utf8Marshaler.FromNative(handle.Name);
-            email = Utf8Marshaler.FromNative(handle.Email);
+            name = LaxUtf8Marshaler.FromNative(handle.Name);
+            email = LaxUtf8Marshaler.FromNative(handle.Email);
             when = Epoch.ToDateTimeOffset(handle.When.Time, handle.When.Offset);
         }
 
@@ -35,6 +35,11 @@ namespace LibGit2Sharp
         /// <param name="when">The when.</param>
         public Signature(string name, string email, DateTimeOffset when)
         {
+            Ensure.ArgumentNotNullOrEmptyString(name, "name");
+            Ensure.ArgumentNotNull(email, "email");
+            Ensure.ArgumentDoesNotContainZeroByte(name, "name");
+            Ensure.ArgumentDoesNotContainZeroByte(email, "email");
+
             this.name = name;
             this.email = email;
             this.when = when;

@@ -560,7 +560,7 @@ namespace LibGit2Sharp
         {
             CheckoutCallbacks checkoutCallbacks = CheckoutCallbacks.GenerateCheckoutCallbacks(onCheckoutProgress, null);
             
-            var callbacks = new RemoteCallbacks(null, onTransferProgress, null, null, credentials);
+            var callbacks = new RemoteCallbacks(null, onTransferProgress, null, credentials);
             GitRemoteCallbacks gitCallbacks = callbacks.GenerateCallbacks();
 
             var cloneOpts = new GitCloneOptions
@@ -841,7 +841,7 @@ namespace LibGit2Sharp
 
             Ensure.ArgumentNotNull(commit, "commit");
 
-            TreeChanges changes = Diff.Compare(commit.Tree, DiffTargets.Index, paths, explicitPathsOptions);
+            var changes = Diff.Compare<TreeChanges>(commit.Tree, DiffTargets.Index, paths, explicitPathsOptions);
             Index.Reset(changes);
         }
 

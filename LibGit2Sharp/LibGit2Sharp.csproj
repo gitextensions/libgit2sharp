@@ -64,7 +64,6 @@
     <Compile Include="BranchCollectionExtensions.cs" />
     <Compile Include="BranchTrackingDetails.cs" />
     <Compile Include="BranchUpdater.cs" />
-    <Compile Include="Changes.cs" />
     <Compile Include="CheckoutCallbacks.cs" />
     <Compile Include="CheckoutModifiers.cs" />
     <Compile Include="CheckoutNotificationOptions.cs" />
@@ -72,6 +71,12 @@
     <Compile Include="CommitFilter.cs" />
     <Compile Include="CommitSortStrategies.cs" />
     <Compile Include="CompareOptions.cs" />
+    <Compile Include="Core\EncodingMarshaler.cs" />
+    <Compile Include="Core\PushTransferProgressCallbacks.cs" />
+    <Compile Include="Core\PackbuilderCallbacks.cs" />
+    <Compile Include="PushOptions.cs" />
+    <Compile Include="Core\GitBuf.cs" />
+    <Compile Include="FilteringOptions.cs" />
     <Compile Include="UnbornBranchException.cs" />
     <Compile Include="LockedFileException.cs" />
     <Compile Include="Core\GitRepositoryInitOptions.cs" />
@@ -82,6 +87,7 @@
     <Compile Include="DiffModifiers.cs" />
     <Compile Include="ObjectType.cs" />
     <Compile Include="Core\UniqueIdentifier.cs" />
+    <Compile Include="Patch.cs" />
     <Compile Include="ReferenceExtensions.cs" />
     <Compile Include="Conflict.cs" />
     <Compile Include="ConflictCollection.cs" />
@@ -103,6 +109,7 @@
     <Compile Include="MatchedPathsAggregator.cs" />
     <Compile Include="Core\Handles\SubmoduleSafeHandle.cs" />
     <Compile Include="Core\SubmoduleLazyGroup.cs" />
+    <Compile Include="Core\GitPushOptions.cs" />
     <Compile Include="Network.cs" />
     <Compile Include="Core\GitRemoteHead.cs" />
     <Compile Include="ReflogEntry.cs" />

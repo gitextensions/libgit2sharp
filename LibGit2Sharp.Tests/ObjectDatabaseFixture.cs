@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using LibGit2Sharp.Tests.TestHelpers;
 using Xunit;
@@ -415,6 +416,69 @@ namespace LibGit2Sharp.Tests
                 }
 
                 Assert.True(count >= 1683);
+            }
+        }
+
+        [Theory]
+        [InlineData("\0Leading zero")]
+        [InlineData("Trailing zero\0")]
+        [InlineData("Zero \0inside")]
+        [InlineData("\0")]
+        [InlineData("\0\0\0")]
+        public void CreatingACommitWithMessageContainingZeroByteThrows(string message)
+        {
+            using (var repo = new Repository(BareTestRepoPath))
+            {
+                Assert.Throws<ArgumentException>(() => repo.ObjectDatabase.CreateCommit(
+                    message, Constants.Signature, Constants.Signature, repo.Head.Tip.Tree, Enumerable.Empty<Commit>()));
+            }
+        }
+
+        [Theory]
+        [InlineData("\0Leading zero")]
+        [InlineData("Trailing zero\0")]
+        [InlineData("Zero \0inside")]
+        [InlineData("\0")]
+        [InlineData("\0\0\0")]
+        public void CreatingATagAnnotationWithNameOrMessageContainingZeroByteThrows(string input)
+        {
+            using (var repo = new Repository(BareTestRepoPath))
+            {
+                Assert.Throws<ArgumentException>(() => repo.ObjectDatabase.CreateTagAnnotation(
+                    input, repo.Head.Tip, Constants.Signature, "message"));
+                Assert.Throws<ArgumentException>(() => repo.ObjectDatabase.CreateTagAnnotation(
+                    "name", repo.Head.Tip, Constants.Signature, input));
+            }
+        }
+
+        [Fact]
+        public void CreatingATagAnnotationWithBadParametersThrows()
+        {
+            using (var repo = new Repository(BareTestRepoPath))
+            {
+                Assert.Throws<ArgumentNullException>(() => repo.ObjectDatabase.CreateTagAnnotation(
+                    null, repo.Head.Tip, Constants.Signature, "message"));
+                Assert.Throws<ArgumentException>(() => repo.ObjectDatabase.CreateTagAnnotation(
+                    string.Empty, repo.Head.Tip, Constants.Signature, "message"));
+                Assert.Throws<ArgumentNullException>(() => repo.ObjectDatabase.CreateTagAnnotation(
+                    "name", null, Constants.Signature, "message"));
+                Assert.Throws<ArgumentNullException>(() => repo.ObjectDatabase.CreateTagAnnotation(
+                    "name", repo.Head.Tip, null, "message"));
+                Assert.Throws<ArgumentNullException>(() => repo.ObjectDatabase.CreateTagAnnotation(
+                    "name", repo.Head.Tip, Constants.Signature, null));
+            }
+        }
+
+        [Fact]
+        public void CanCreateATagAnnotationWithAnEmptyMessage()
+        {
+            string path = CloneBareTestRepo();
+            using (var repo = new Repository(path))
+            {
+                var tagAnnotation = repo.ObjectDatabase.CreateTagAnnotation(
+                    "name", repo.Head.Tip, Constants.Signature, string.Empty);
+
+                Assert.Equal(string.Empty, tagAnnotation.Message);
             }
         }
     }

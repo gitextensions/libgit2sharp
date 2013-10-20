@@ -198,6 +198,7 @@ namespace LibGit2Sharp
         internal Commit CreateCommit(string message, Signature author, Signature committer, Tree tree, IEnumerable<Commit> parents, string referenceName)
         {
             Ensure.ArgumentNotNull(message, "message");
+            Ensure.ArgumentDoesNotContainZeroByte(message, "message");
             Ensure.ArgumentNotNull(author, "author");
             Ensure.ArgumentNotNull(committer, "committer");
             Ensure.ArgumentNotNull(tree, "tree");
@@ -221,6 +222,13 @@ namespace LibGit2Sharp
         /// <returns>The created <see cref="TagAnnotation"/>.</returns>
         public virtual TagAnnotation CreateTagAnnotation(string name, GitObject target, Signature tagger, string message)
         {
+            Ensure.ArgumentNotNullOrEmptyString(name, "name");
+            Ensure.ArgumentNotNull(message, "message");
+            Ensure.ArgumentNotNull(target, "target");
+            Ensure.ArgumentNotNull(tagger, "tagger");
+            Ensure.ArgumentDoesNotContainZeroByte(name, "name");
+            Ensure.ArgumentDoesNotContainZeroByte(message, "message");
+
             string prettifiedMessage = Proxy.git_message_prettify(message);
 
             ObjectId tagId = Proxy.git_tag_annotation_create(repo.Handle, name, target, tagger, prettifiedMessage);
